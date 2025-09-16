@@ -15,18 +15,17 @@ const pool = new Pool({
 });
 
 // Test route
-app.post("/api/v1/test", async (req, res) => {
+app.post("/api/set-data", async (req, res) => {
   try {
-    const { temperature, humidity } = req.body;
+    const { device_label, temperature, humidity } = req.body;
 
-    if (temperature === undefined || humidity === undefined) {
-      return res.status(400).json({ error: "Missing temperature or humidity" });
+    if (!device_label || temperature === undefined || humidity === undefined) {
+      return res.status(400).json({ error: "Missing device_label, temperature or humidity" });
     }
 
-    // Insert into database
     const result = await pool.query(
-      "INSERT INTO dht11_data (temperature, humidity) VALUES ($1, $2) RETURNING *",
-      [temperature, humidity]
+      "INSERT INTO dht11_data (device_label, temperature, humidity) VALUES ($1, $2, $3) RETURNING *",
+      [device_label, temperature, humidity]
     );
 
     console.log("📩 Data stored:", result.rows[0]);
@@ -42,7 +41,7 @@ app.post("/api/v1/test", async (req, res) => {
 });
 
 // Fetch all data
-app.get("/api/v1/data", async (req, res) => {
+app.get("/api/get-data", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM dht11_data ORDER BY created_at DESC");
     res.json(result.rows);
