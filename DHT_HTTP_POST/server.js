@@ -1,12 +1,11 @@
 // server.js
 const express = require("express");
-const bodyParser = require("body-parser");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON
-app.use(bodyParser.json());
+// Parse JSON
+app.use(express.json());
 
 // POST route
 app.post("/api/v1/test", (req, res) => {
@@ -20,7 +19,6 @@ app.post("/api/v1/test", (req, res) => {
   });
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
